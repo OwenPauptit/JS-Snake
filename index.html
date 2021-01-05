@@ -1,0 +1,115 @@
+<canvas id="canvas"></canvas>
+
+<script>
+    
+    canvasSize = [400,400];
+    gridSize = 20;
+    tileSize = [canvasSize[0]/gridSize,canvasSize[1]/gridSize];
+    vel = [1,0];
+    pos = [0,0];
+    tail = [];
+    fruit = [10,10]
+
+    window.onload = function (){
+        canvas = document.getElementById("canvas");
+        canvas.width = canvasSize[0];
+        canvas.height = canvasSize[1];
+        ctx = canvas.getContext("2d");
+        document.addEventListener("keydown",keyPush);
+        var loop = setInterval(gameLoop, 1000/15);
+        tail.push([5,0])
+        tail.push([4,0])
+        tail.push([3,0])
+        tail.push([2,0])
+        tail.push([1,0])
+    }
+
+    function keyPush(event)
+    {
+        switch(event.keyCode)
+        {
+            case 37:
+                vel = [-1,0]
+                break;
+            case 38:
+                vel = [0,-1]
+                break;
+            case 39:
+                vel = [1,0]
+                break;
+            case 40:
+                vel = [0,1]
+                break;
+        }
+    }
+
+    function gameLoop()
+    {
+        for (var i = tail.length - 1; i > 0; i--)
+        {
+            tail[i][0] = tail[i-1][0];
+            tail[i][1] = tail[i-1][1];
+        }
+
+        tail[0][0] += vel[0];
+        tail[0][1] += vel[1];
+        if (tail[0][0] < 0)
+        {
+            tail[0][0] = gridSize - 1;
+        }
+        else if (tail[0][0] >= gridSize)
+        {
+            tail[0][0] = 0;
+        }
+        if (tail[0][1] < 0)
+        {
+            tail[0][1] = gridSize - 1;
+        }
+        else if (tail[0][1] >= gridSize)
+        {
+            tail[0][1] = 0;
+        }
+
+        for (var i = 1; i < tail.length; i++)
+        {
+            if (tail[0][0] == tail[i][0] && tail[0][1] == tail[i][1])
+            {
+                while (tail.length > 5)
+                {
+                    tail.pop();
+                }
+                break;
+            }
+        }
+
+        if (tail[0][0] == fruit[0] && tail[0][1] == fruit[1])
+        {
+            tail.push([tail[1][0],tail[1][1]]);
+            fruit[0] = Math.floor(Math.random()*gridSize);
+            fruit[1] = Math.floor(Math.random()*gridSize);
+        }
+
+        draw();
+    }
+
+    function draw()
+    {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0,0,canvasSize[0], canvasSize[1]);
+
+        ctx.fillStyle = "green";
+        ctx.fillRect(fruit[0]*tileSize[0],fruit[1]*tileSize[1],tileSize[0]-2,tileSize[1]-2);
+
+        ctx.fillStyle = "red";
+        for (var i = 0; i < tail.length; i++)
+        {
+            ctx.fillRect(tail[i][0]*tileSize[0],tail[i][1]*tileSize[1],tileSize[0]-2,tileSize[1]-2);
+        }
+
+
+    }
+
+
+
+
+</script>
